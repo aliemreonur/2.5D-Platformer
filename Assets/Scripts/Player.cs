@@ -12,6 +12,8 @@ public class Player : MonoBehaviour
     private float _yVelocity;
     private bool _canDooubleJump;
 
+    private int coins;
+
     void Start()
     {
         _characterController = GetComponent<CharacterController>();        
@@ -51,4 +53,12 @@ public class Player : MonoBehaviour
         //RaycastHit hitInfo;
 
     }
+
+    public void CoinCollected()
+    {
+        coins++;
+        UIManager.Instance.UpdateScore(coins);
+    }
+
+
 }

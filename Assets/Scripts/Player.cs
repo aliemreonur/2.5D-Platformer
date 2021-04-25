@@ -39,7 +39,7 @@ public class Player : MonoBehaviour
             {
                 if(_canDooubleJump)
                 {
-                    _yVelocity += _jumpHeight *1.5f;
+                    _yVelocity += _jumpHeight;
                     _canDooubleJump = false;
                 }
             }
@@ -49,8 +49,10 @@ public class Player : MonoBehaviour
         velocity.y = _yVelocity;
         _characterController.Move(velocity * Time.deltaTime);
 
-        //Physics.Raycast(transform.position, Vector3.down * 2f, 2 << 8);
-        //RaycastHit hitInfo;
+        if(transform.position.y < -5)
+        {
+            Debug.Log("Game Over");
+        }
 
     }
 
@@ -59,6 +61,4 @@ public class Player : MonoBehaviour
         coins++;
         UIManager.Instance.UpdateScore(coins);
     }
-
-
 }

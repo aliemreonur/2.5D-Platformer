@@ -22,4 +22,20 @@ public class Elevator : MonoBehaviour
             transform.position = Vector3.MoveTowards(transform.position, _floor1.position, _speed * Time.deltaTime);
         }
     }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if(other.tag == "Player")
+        {
+            other.transform.parent = this.gameObject.transform;
+        }
+    }
+
+    private void OnTriggerExit(Collider other)
+    {
+        if(other.tag == "Player")
+        {
+            other.transform.parent = null;
+        }
+    }
 }

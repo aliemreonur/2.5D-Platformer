@@ -38,6 +38,7 @@ public class ElevatorPanel : MonoBehaviour
                 else
                 {
                     elevator.elevatorCalledDown = false;
+                    _callButtonMat.color = Color.red;
                     Debug.Log("Elevator going up");
                 }
             }

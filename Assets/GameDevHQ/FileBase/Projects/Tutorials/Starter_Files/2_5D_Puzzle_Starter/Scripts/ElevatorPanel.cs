@@ -10,7 +10,7 @@ public class ElevatorPanel : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        _callButtonMat = transform.GetChild(0).gameObject.GetComponent<Renderer>().material;
+        _callButtonMat = transform.GetChild(0).gameObject.GetComponent<MeshRenderer>().material;
         _player = FindObjectOfType<Player>().GetComponent<Player>();
         elevator = FindObjectOfType<Elevator>().GetComponent<Elevator>();
         if(_player == null)

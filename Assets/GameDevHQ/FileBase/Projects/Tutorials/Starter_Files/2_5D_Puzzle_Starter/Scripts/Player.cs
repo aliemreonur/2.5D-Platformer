@@ -5,7 +5,7 @@ using UnityEngine.SceneManagement;
 
 public class Player : MonoBehaviour
 {
-    private CharacterController _controller;
+    private CharacterController _cc;
     [SerializeField]
     private float _speed = 5.0f;
     [SerializeField]
@@ -19,6 +19,11 @@ public class Player : MonoBehaviour
     private UIManager _uiManager;
     [SerializeField]
     private int _lives = 3;
+    private Vector3 _wallSurfaceNormal;
+
+    [SerializeField] bool _canWallJump;
+
+    private Vector3 _direction, _velocity;
 
     public int Coins
     {
@@ -31,7 +36,7 @@ public class Player : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        _controller = GetComponent<CharacterController>();
+        _cc = GetComponent<CharacterController>();
         _uiManager = GameObject.Find("Canvas").GetComponent<UIManager>();
 
         if (_uiManager == null)
@@ -46,11 +51,12 @@ public class Player : MonoBehaviour
     void Update()
     {
         float horizontalInput = Input.GetAxis("Horizontal");
-        Vector3 direction = new Vector3(horizontalInput, 0, 0);
-        Vector3 velocity = direction * _speed;
 
-        if (_controller.isGrounded == true)
+        if (_cc.isGrounded == true)
         {
+            _direction = new Vector3(horizontalInput, 0, 0);
+            _velocity = _direction * _speed;
+            _canWallJump = false;
             if (Input.GetKeyDown(KeyCode.Space))
             {
                 _yVelocity = _jumpHeight;
@@ -61,19 +67,21 @@ public class Player : MonoBehaviour
         {
             if (Input.GetKeyDown(KeyCode.Space))
             {
-                if (_canDoubleJump == true)
+                if (_canDoubleJump && !_canWallJump)
                 {
                     _yVelocity += _jumpHeight;
                     _canDoubleJump = false;
                 }
+                else if(_canWallJump)
+                {
+                    _velocity = _wallSurfaceNormal *_speed;
+                    _yVelocity += _jumpHeight*1.2f;
+                }
             }
-
             _yVelocity -= _gravity;
         }
-
-        velocity.y = _yVelocity;
-
-        _controller.Move(velocity * Time.deltaTime);
+        _velocity.y = _yVelocity;
+        _cc.Move(_velocity * Time.deltaTime);
     }
 
     public void AddCoins()
@@ -81,6 +89,16 @@ public class Player : MonoBehaviour
         _coins++;
 
         _uiManager.UpdateCoinDisplay(_coins);
+    }
+
+    private void OnControllerColliderHit(ControllerColliderHit hit)
+    {
+        if(!_cc.isGrounded && hit.transform.tag == "Wall")
+        {
+            //Debug.DrawRay(hit.point, hit.normal, Color.blue);
+            _wallSurfaceNormal = hit.normal;
+            _canWallJump = true;
+        }
     }
 
     public void Damage()

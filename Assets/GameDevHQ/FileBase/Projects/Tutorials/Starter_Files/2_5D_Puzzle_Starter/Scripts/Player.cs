@@ -20,6 +20,7 @@ public class Player : MonoBehaviour
     [SerializeField]
     private int _lives = 3;
     private Vector3 _wallSurfaceNormal;
+    private float _pushForce = 2f;
 
     [SerializeField] bool _canWallJump;
 
@@ -75,7 +76,7 @@ public class Player : MonoBehaviour
                 else if(_canWallJump)
                 {
                     _velocity = _wallSurfaceNormal *_speed;
-                    _yVelocity += _jumpHeight*1.2f;
+                    _yVelocity = _jumpHeight;
                 }
             }
             _yVelocity -= _gravity;
@@ -87,7 +88,6 @@ public class Player : MonoBehaviour
     public void AddCoins()
     {
         _coins++;
-
         _uiManager.UpdateCoinDisplay(_coins);
     }
 
@@ -99,6 +99,20 @@ public class Player : MonoBehaviour
             _wallSurfaceNormal = hit.normal;
             _canWallJump = true;
         }
+        if(_cc.isGrounded && hit.transform.tag =="Moveable")
+        {
+            Rigidbody rb = hit.rigidbody;
+            if(rb == null)
+            {
+                Debug.LogError("The hitted object I am trying to push does not have a Rigidbody component");
+            }
+            else
+            {
+                Vector3 pushDir = new Vector3(hit.moveDirection.x, 0, 0);
+                rb.velocity = pushDir * _pushForce; 
+            }        
+        }
+     
     }
 
     public void Damage()
